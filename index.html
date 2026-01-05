@@ -217,7 +217,7 @@
       };
 
       // Voucher button: buka URL voucher (jika ada) atau telepon nomor profil
-      const btnVoucher = document.getElementById("btnVoucher");
+      /*const btnVoucher = document.getElementById("btnVoucher");
       if (p.voucherUrl || p.phone) {
         btnVoucher.style.display = "inline-flex";
       } else {
@@ -236,6 +236,16 @@
           return;
         }
         alert("No voucher link or phone available for this profile.");
+      };
+    }*/
+       // Voucher button: selalu tampil dan buka paysgift di tab baru
+      const btnVoucher = document.getElementById("btnVoucher");
+      btnVoucher.style.display = "inline-flex";
+      btnVoucher.href = "https://www.paysgift.co.id/";
+      btnVoucher.target = "_blank";
+      btnVoucher.onclick = (e) => {
+        e.preventDefault();
+        window.open("https://www.paysgift.co.id/", "_blank", "noopener");
       };
     }
 
