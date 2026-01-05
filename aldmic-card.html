@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aldmic Card — Denny Indrawan</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #f6f7f9; }
+    .wrap { max-width: 420px; margin: 0 auto; padding: 18px; }
+    .card { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .row { display:flex; gap:14px; align-items:center; }
+    .avatar { width: 72px; height: 72px; border-radius: 16px; object-fit: cover; background:#eee; }
+    h1 { font-size: 20px; margin: 0; }
+    .sub { margin-top: 2px; color:#555; font-size: 14px; }
+    .badge { display:inline-block; margin-top: 8px; padding:6px 10px; border-radius: 999px; font-size: 12px; background:#eef6ff; color:#1b4f8a; }
+    .btns { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 14px; }
+    .btn { display:flex; justify-content:center; align-items:center; gap:8px; padding: 12px; border-radius: 14px; border: 1px solid #e7e7e7; background: #fff; text-decoration:none; color:#111; font-weight:600; }
+    .btn.primary { background:#111; color:#fff; border-color:#111; }
+    .sec { margin-top: 14px; padding-top: 14px; border-top: 1px solid #eee; }
+    .label { font-size: 12px; color:#666; margin-bottom: 6px; }
+    .line { font-size: 14px; color:#111; margin: 0; }
+    .footer { text-align:center; color:#777; font-size: 12px; margin-top: 14px; }
+    .qr { margin-top: 12px; display:flex; justify-content:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row">
+        <img class="avatar" src="https://card.aldmic.co.id/assets/denny.jpg" alt="Denny Indrawan" />
+        <div>
+          <h1 id="fullName">Denny Indrawan</h1>
+          <div class="sub" id="title">Chief Technology Officer</div>
+          <div class="sub" id="company">PT Aldmic COOPN Digital</div>
+          <div class="badge">✔ Verified Representative</div>
+        </div>
+      </div>
+
+      <div class="btns">
+        <a class="btn primary" href="#" id="btnSave">📥 Save Contact</a>
+        <a class="btn" href="#" id="btnShare">📤 Share</a>
+        <a class="btn" href="https://www.linkedin.com/in/dennyindrawan" target="_blank" rel="noopener">🔗 LinkedIn</a>
+        <a class="btn" href="https://www.aldmic.co.id" target="_blank" rel="noopener">🌐 Website</a>
+      </div>
+
+      <div class="sec">
+        <div class="label">Professional Summary</div>
+        <p class="line" id="summary">
+          CTO at PT Aldmic. Building secure, scalable digital voucher infrastructure.
+        </p>
+      </div>
+
+      <!-- Optional QR (simple placeholder). In production you can generate QR server-side -->
+      <div class="sec">
+        <div class="label">QR Code</div>
+        <p class="line">Scan to open this profile:</p>
+        <div class="qr">
+          <img
+            alt="QR Code"
+            width="160"
+            height="160"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fcard.aldmic.co.id%2Fdenny"
+          />
+        </div>
+      </div>
+
+      <div class="footer">
+        © PT Aldmic Indonesia · Privacy · Terms
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Data profile (bisa dari backend / DB) ---
+    const profile = {
+      firstName: "Denny",
+      lastName: "Indrawan",
+      fullName: "Denny Indrawan",
+      title: "Chief Technology Officer",
+      role: "Technology & Digital Platform",
+      org: "PT Aldmic Indonesia",
+      email: "denny@aldmic.co.id",
+      phone: "+62812XXXXXXX",
+      website: "https://www.aldmic.co.id",
+      linkedin: "https://www.linkedin.com/in/dennyindrawan",
+      note: "CTO at PT Aldmic. Building secure, scalable digital voucher infrastructure.",
+      address: { city: "Jakarta", country: "Indonesia" },
+      photoUrl: "https://card.aldmic.co.id/assets/denny.jpg"
+    };
+
+    function escapeVCF(s) {
+      // vCard escaping: backslash, comma, semicolon, newline
+      return String(s || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;")
+        .replace(/\n/g, "\\n");
+    }
+
+    function buildVCard(p) {
+      // vCard 4.0
+      const lines = [
+        "BEGIN:VCARD",
+        "VERSION:4.0",
+        `FN:${escapeVCF(p.fullName)}`,
+        `N:${escapeVCF(p.lastName)};${escapeVCF(p.firstName)};;;`,
+        `ORG:${escapeVCF(p.org)}`,
+        `TITLE:${escapeVCF(p.title)}`,
+        `ROLE:${escapeVCF(p.role)}`,
+        `EMAIL;TYPE=work:${escapeVCF(p.email)}`,
+        `TEL;TYPE=cell:${escapeVCF(p.phone)}`,
+        `URL:${escapeVCF(p.website)}`,
+        `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}`,
+        `NOTE:${escapeVCF(p.note)}`,
+        `ADR;TYPE=work:;;${escapeVCF(p.address.city)};;;${escapeVCF(p.address.country)}`,
+        `PHOTO;VALUE=uri:${escapeVCF(p.photoUrl)}`,
+        "END:VCARD"
+      ];
+      return lines.join("\r\n");
+    }
+
+    function downloadVCard(filename, content) {
+      const blob = new Blob([content], { type: "text/vcard;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("btnSave").addEventListener("click", (e) => {
+      e.preventDefault();
+      const vcf = buildVCard(profile);
+      const safeName = (profile.fullName || "contact").replace(/\s+/g, "_");
+      downloadVCard(`${safeName}.vcf`, vcf);
+    });
+
+    document.getElementById("btnShare").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const shareUrl = "https://card.aldmic.co.id/denny";
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: "Aldmic Card", text: profile.fullName, url: shareUrl });
+        } else {
+          await navigator.clipboard.writeText(shareUrl);
+          alert("Link copied!");
+        }
+      } catch (_) {}
+    });
+  </script>
+</body>
+</html>

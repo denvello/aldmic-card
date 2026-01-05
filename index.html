@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aldmic Card</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:#f6f7f9; }
+    .wrap { max-width: 420px; margin: 0 auto; padding: 18px; }
+    .card { background:#fff; border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    /*.row { display:flex; gap:14px; align-items:center; }*/
+    .row { display:flex; gap:14px; align-items:flex-start; }
+    .idBlock { flex: 1; min-width: 0; } /* supaya teks tidak mendorong layout */
+    .avatarWrap { width: 88px; height: 88px; border-radius: 18px; background:#eee; overflow:hidden; flex: 0 0 88px; }
+    .avatar { width:100%; height:100%; object-fit: cover; display:block; }
+    h1 { font-size: 22px; margin: 0; line-height: 1.2; }
+    .sub { margin-top: 4px; color:#555; font-size: 14px; }
+    .badge { display:inline-flex; gap:8px; align-items:center; margin-top: 10px; padding:6px 10px; border-radius: 999px; font-size: 12px; background:#eef6ff; color:#1b4f8a; }
+    .btns { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 16px; }
+    .btn { display:flex; justify-content:center; align-items:center; gap:8px; padding: 12px; border-radius: 14px; border: 1px solid #e7e7e7; background: #fff; text-decoration:none; color:#111; font-weight:700; }
+    .btn.primary { background:#111; color:#fff; border-color:#111; }
+    .btn.voucher { grid-column: 1 / -1; background: #ff6b00; color: #fff; border-color: #ff6b00; }
+    .sec { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
+    .label { font-size: 12px; color:#666; margin-bottom: 8px; }
+    .line { font-size: 15px; color:#111; margin: 0; }
+    .footer { text-align:center; color:#777; font-size: 12px; margin-top: 14px; }
+    .qr { margin-top: 12px; display:flex; justify-content:center; }
+    .muted { color:#666; font-size: 13px; }
+    .logoBox {
+      width: 100%;
+      padding: 12px 0;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .logoImg {
+      width: 60%;
+      height: auto;
+      object-fit: contain; /* logo tidak kepotong */
+      display: block;
+      max-width: 100%;
+    }
+    .divider {
+      margin: 8px 0;
+      border-top: 1px solid #eee;
+      height: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="logoBox">
+        <img id="companyLogo" class="logoImg" src="/assets/brand/placeholder-logo.png" alt="Company logo"
+        onerror="this.style.display='none'">
+      </div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <div class="row">
+        <div class="avatarWrap">
+          <img id="avatar" class="avatar" src="/assets/photos/placeholder.jpg" alt="Profile photo"
+               onerror="this.src='/assets/photos/placeholder.jpg'">
+        </div>
+        <div class="idBlock">
+          <h1 id="fullName">Loading…</h1>
+          <div class="sub" id="title"></div>
+          <div class="sub" id="company"></div>
+          <div class="badge" id="badge" style="display:none;">✔ Verified Representative</div>
+        </div>
+      </div>
+
+      <div class="btns">
+        <a class="btn primary" href="#" id="btnSave">📥 Save Contact</a>
+        <a class="btn" href="#" id="btnShare">📤 Share</a>
+        <a class="btn" href="#" id="btnLinkedIn" target="_blank" rel="noopener">🔗 LinkedIn</a>
+        <a class="btn" href="#" id="btnWebsite" target="_blank" rel="noopener">🌐 Website</a>
+        <a class="btn voucher" href="#" id="btnVoucher">get my voucher</a>
+      </div>
+
+      <div class="sec">
+        <div class="label">Professional Summary</div>
+        <p class="line" id="summary"></p>
+      </div>
+
+      <div class="sec">
+        <div class="label">QR Code</div>
+        <div class="muted">Scan to open this profile:</div>
+        <div class="qr">
+          <img id="qrImg" alt="QR Code" width="170" height="170" />
+        </div>
+      </div>
+
+      <div class="footer">
+        © PT Aldmic COOPN Digital · Privacy · Terms
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function escapeVCF(s) {
+      return String(s || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;")
+        .replace(/\n/g, "\\n");
+    }
+
+    function buildVCard(p) {
+      // Split name safely: last word as last name (simple heuristic)
+      const parts = (p.fullName || "").trim().split(/\s+/);
+      const firstName = parts.slice(0, -1).join(" ") || parts[0] || "";
+      const lastName = parts.slice(-1)[0] || "";
+
+      const lines = [
+        "BEGIN:VCARD",
+        "VERSION:4.0",
+        `FN:${escapeVCF(p.fullName)}`,
+        `N:${escapeVCF(lastName)};${escapeVCF(firstName)};;;`,
+        `ORG:${escapeVCF(p.company)}`,
+        `TITLE:${escapeVCF(p.title)}`,
+        p.email ? `EMAIL;TYPE=work:${escapeVCF(p.email)}` : "",
+        p.phone ? `TEL;TYPE=cell:${escapeVCF(p.phone)}` : "",
+        p.website ? `URL:${escapeVCF(p.website)}` : "",
+        p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
+        p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
+        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(location.origin + p.photo)}` : "",
+        "END:VCARD"
+      ].filter(Boolean);
+
+      return lines.join("\r\n");
+    }
+
+    function downloadVCard(filename, content) {
+      const blob = new Blob([content], { type: "text/vcard;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function getUserSlug() {
+      const params = new URLSearchParams(location.search);
+      return (params.get("u") || "denny").toLowerCase(); // default denny
+    }
+
+    async function loadProfile(slug) {
+      const res = await fetch("/profiles.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("profiles.json not found");
+      const db = await res.json();
+      const profile = db[slug];
+      if (!profile) throw new Error("User not found: " + slug);
+      return profile;
+    }
+
+    function render(slug, p) {
+      document.title = `Aldmic Card — ${p.fullName}`;
+      document.getElementById("fullName").textContent = p.fullName;
+      document.getElementById("title").textContent = p.title;
+      document.getElementById("company").textContent = p.company;
+      document.getElementById("summary").textContent = p.summary || "";
+      document.getElementById("btnLinkedIn").href = p.linkedin || "#";
+      document.getElementById("btnWebsite").href = p.website || "#";
+
+      const badge = document.getElementById("badge");
+      badge.style.display = p.verified ? "inline-flex" : "none";
+
+      // FOTO 
+      const avatar = document.getElementById("avatar");
+      avatar.src = p.photo || "/assets/photos/placeholder.jpg";
+      avatar.alt = p.fullName + " photo";
+
+      // UPDATE: LOGO perusahaan kanan atas  
+      const companyLogo = document.getElementById("companyLogo");
+      if (p.companyLogo) {
+        companyLogo.style.display = "block";
+        companyLogo.src = p.companyLogo;
+        companyLogo.alt = (p.company || "Company") + " logo";
+      } else {
+        companyLogo.style.display = "none";
+      }
+
+      // QR untuk membuka profile yang sama
+      const shareUrl = `${location.origin}${location.pathname}?u=${encodeURIComponent(slug)}`;
+      document.getElementById("qrImg").src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=" + encodeURIComponent(shareUrl);
+
+      // Save contact
+      document.getElementById("btnSave").onclick = (e) => {
+        e.preventDefault();
+        const vcf = buildVCard(p);
+        const safeName = (p.fullName || "contact").replace(/\s+/g, "_");
+        downloadVCard(`${safeName}.vcf`, vcf);
+      };
+
+      // Share
+      document.getElementById("btnShare").onclick = async (e) => {
+        e.preventDefault();
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: "Aldmic Card", text: p.fullName, url: shareUrl });
+          } else {
+            await navigator.clipboard.writeText(shareUrl);
+            alert("Link copied!");
+          }
+        } catch (_) {}
+      };
+
+      // Voucher button: buka URL voucher (jika ada) atau telepon nomor profil
+      const btnVoucher = document.getElementById("btnVoucher");
+      if (p.voucherUrl || p.phone) {
+        btnVoucher.style.display = "inline-flex";
+      } else {
+        btnVoucher.style.display = "none";
+      }
+      btnVoucher.onclick = (e) => {
+        e.preventDefault();
+        if (p.voucherUrl) {
+          window.open(p.voucherUrl, "_blank");
+          return;
+        }
+        if (p.phone) {
+          // sanitize phone
+          const tel = String(p.phone).replace(/[^+0-9]/g, "");
+          window.location.href = `tel:${tel}`;
+          return;
+        }
+        alert("No voucher link or phone available for this profile.");
+      };
+    }
+
+    (async () => {
+      const slug = getUserSlug();
+      try {
+        const p = await loadProfile(slug);
+        render(slug, p);
+      } catch (err) {
+        document.getElementById("fullName").textContent = "Profile not found";
+        document.getElementById("summary").textContent = String(err.message || err);
+      }
+    })();
+  </script>
+</body>
+</html>
