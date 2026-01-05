@@ -7,8 +7,8 @@
     "summary": "CTO at PT Aldmic. Building secure, scalable digital voucher infrastructure.",
     "website": "https://coopn.aldmic.com/",
     "linkedin": "https://www.linkedin.com/in/denny-indrawan-63468768/",
-    "photo": "/assets/photos/dennyindrawan.png",
-    "companyLogo": "/assets/brand/logoaldmic.png",
+    "photo": "assets/photos/dennyindrawan.png",
+    "companyLogo": "assets/brand/logoaldmic.png",
     "email": "denny@aldmic.co.id",
     "phone": "+6281316646924"
   },
@@ -20,8 +20,8 @@
     "summary": "Driving partnerships and growth across multi-merchant voucher ecosystem.",
     "website": "https://coopn.aldmic.com/",
     "linkedin": "https://www.linkedin.com/in/rina-example",
-    "photo": "/assets/photos/rina.jpg",
-    "companyLogo": "/assets/brand/logoaldmic.png",
+    "photo": "assets/photos/rina.jpg",
+    "companyLogo": "assets/brand/logoaldmic.png",
     "email": "rina@aldmic.co.id",
     "phone": "+62813XXXXXXX"
   }
