@@ -56,7 +56,7 @@
   <div class="wrap">
     <div class="card">
       <div class="logoBox">
-        <img id="companyLogo" class="logoImg" src="/assets/brand/placeholder-logo.png" alt="Company logo"
+        <img id="companyLogo" class="logoImg" src="assets/brand/placeholder-logo.png" alt="Company logo"
         onerror="this.style.display='none'">
       </div>
 
@@ -64,8 +64,8 @@
 
       <div class="row">
         <div class="avatarWrap">
-          <img id="avatar" class="avatar" src="/assets/photos/placeholder.jpg" alt="Profile photo"
-               onerror="this.src='/assets/photos/placeholder.jpg'">
+          <img id="avatar" class="avatar" src="assets/photos/placeholder.jpg" alt="Profile photo"
+               onerror="this.src='assets/photos/placeholder.jpg'">
         </div>
         <div class="idBlock">
           <h1 id="fullName">Loading…</h1>
@@ -129,7 +129,8 @@
         p.website ? `URL:${escapeVCF(p.website)}` : "",
         p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
         p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
-        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(location.origin + p.photo)}` : "",
+        // UPDATE: bikin URL absolut yang benar meskipun site ada di /aldmic-card/
+        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(new URL(p.photo, location.href).toString())}` : "",
         "END:VCARD"
       ].filter(Boolean);
 
@@ -154,7 +155,7 @@
     }
 
     async function loadProfile(slug) {
-      const res = await fetch("/profiles.json", { cache: "no-store" });
+      const res = await fetch("profiles.json", { cache: "no-store" });
       if (!res.ok) throw new Error("profiles.json not found");
       const db = await res.json();
       const profile = db[slug];
@@ -176,7 +177,7 @@
 
       // FOTO 
       const avatar = document.getElementById("avatar");
-      avatar.src = p.photo || "/assets/photos/placeholder.jpg";
+      avatar.src = p.photo || "assets/photos/placeholder.jpg";
       avatar.alt = p.fullName + " photo";
 
       // UPDATE: LOGO perusahaan kanan atas  
