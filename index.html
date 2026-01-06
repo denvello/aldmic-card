@@ -133,7 +133,9 @@
         p.website ? `URL:${escapeVCF(p.website)}` : "",
         p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
         p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
-        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(location.origin + p.photo)}` : "",
+        /*p.photo ? `PHOTO;VALUE=uri:${escapeVCF(location.origin + p.photo)}` : "",*/
+        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(new URL(p.photo, location.href).toString())}` : "",
+
         "END:VCARD"
       ].filter(Boolean);
 
@@ -158,7 +160,7 @@
     }
 
     async function loadProfile(slug) {
-      const res = await fetch("/profiles.json", { cache: "no-store" });
+      const res = await fetch("profiles.json", { cache: "no-store" });
       if (!res.ok) throw new Error("profiles.json not found");
       const db = await res.json();
       const profile = db[slug];
