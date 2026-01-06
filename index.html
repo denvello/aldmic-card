@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Aldmic Card</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:#f6f7f9; }
+    body { --brand-blue: #1b6fbf; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; background:#f6f7f9; }
     .wrap { max-width: 420px; margin: 0 auto; padding: 18px; }
     .card { background:#fff; border-radius: 18px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
     /*.row { display:flex; gap:14px; align-items:center; }*/
@@ -18,7 +18,8 @@
     .badge { display:inline-flex; gap:8px; align-items:center; margin-top: 10px; padding:6px 10px; border-radius: 999px; font-size: 12px; background:#eef6ff; color:#1b4f8a; }
     .btns { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 16px; }
     .btn { display:flex; justify-content:center; align-items:center; gap:8px; padding: 12px; border-radius: 14px; border: 1px solid #e7e7e7; background: #fff; text-decoration:none; color:#111; font-weight:700; }
-    .btn.primary { background:#111; color:#fff; border-color:#111; }
+    .btn.primary { background:var(--brand-blue); color:#fff; border-color:var(--brand-blue); }
+    .btn-icon { width:18px; height:18px; display:inline-block; margin-right:8px; vertical-align:middle; }
     .btn.voucher { grid-column: 1 / -1; background: #ff6b00; color: #fff; border-color: #ff6b00; }
     .sec { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
     .label { font-size: 12px; color:#666; margin-bottom: 8px; }
@@ -27,11 +28,14 @@
     .qr { margin-top: 12px; display:flex; justify-content:center; }
     .muted { color:#666; font-size: 13px; }
     .logoBox {
-      width: 100%;
-      padding: 12px 0;
-      border-radius: 12px;
-      background: transparent;
-      border: none;
+      /* extend background to the card edges by cancelling card padding */
+      margin: -18px -18px 0 -18px;
+      padding: 20px 0;
+      border-radius: 18px 18px 0 0;
+      background-image: url('/assets/brand/header-bg.png');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -39,7 +43,7 @@
     }
 
     .logoImg {
-      width: 60%;
+      width: 80%;
       height: auto;
       object-fit: contain; /* logo tidak kepotong */
       display: block;
@@ -56,7 +60,7 @@
   <div class="wrap">
     <div class="card">
       <div class="logoBox">
-        <img id="companyLogo" class="logoImg" src="assets/brand/placeholder-logo.png" alt="Company logo"
+        <img id="companyLogo" class="logoImg" src="/assets/brand/placeholder-logo.png" alt="Company logo"
         onerror="this.style.display='none'">
       </div>
 
@@ -64,8 +68,8 @@
 
       <div class="row">
         <div class="avatarWrap">
-          <img id="avatar" class="avatar" src="assets/photos/placeholder.jpg" alt="Profile photo"
-               onerror="this.src='assets/photos/placeholder.jpg'">
+          <img id="avatar" class="avatar" src="/assets/photos/placeholder.jpg" alt="Profile photo"
+               onerror="this.src='/assets/photos/placeholder.jpg'">
         </div>
         <div class="idBlock">
           <h1 id="fullName">Loading…</h1>
@@ -76,10 +80,10 @@
       </div>
 
       <div class="btns">
-        <a class="btn primary" href="#" id="btnSave">📥 Save Contact</a>
-        <a class="btn" href="#" id="btnShare">📤 Share</a>
-        <a class="btn" href="#" id="btnLinkedIn" target="_blank" rel="noopener">🔗 LinkedIn</a>
-        <a class="btn" href="#" id="btnWebsite" target="_blank" rel="noopener">🌐 Website</a>
+        <a class="btn primary" href="#" id="btnSave"><img class="btn-icon" src="/assets/icon/save-contact.png" alt="">Save Contact</a>
+        <a class="btn" href="#" id="btnShare"><img class="btn-icon" src="/assets/icon/share-profile.png" alt="">Share</a>
+        <a class="btn" href="#" id="btnLinkedIn" target="_blank" rel="noopener"><img class="btn-icon" src="/assets/icon/linkedin.png" alt="">LinkedIn</a>
+        <a class="btn" href="#" id="btnWebsite" target="_blank" rel="noopener"><img class="btn-icon" src="/assets/icon/website.png" alt="">Website</a>
         <a class="btn voucher" href="#" id="btnVoucher">get my voucher</a>
       </div>
 
@@ -90,7 +94,7 @@
 
       <div class="sec">
         <div class="label">QR Code</div>
-        <div class="muted">Scan to open this profile:</div>
+        <div class="muted">Scan to open my profile:</div>
         <div class="qr">
           <img id="qrImg" alt="QR Code" width="170" height="170" />
         </div>
@@ -129,8 +133,7 @@
         p.website ? `URL:${escapeVCF(p.website)}` : "",
         p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
         p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
-        // UPDATE: bikin URL absolut yang benar meskipun site ada di /aldmic-card/
-        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(new URL(p.photo, location.href).toString())}` : "",
+        p.photo ? `PHOTO;VALUE=uri:${escapeVCF(location.origin + p.photo)}` : "",
         "END:VCARD"
       ].filter(Boolean);
 
@@ -155,7 +158,7 @@
     }
 
     async function loadProfile(slug) {
-      const res = await fetch("profiles.json", { cache: "no-store" });
+      const res = await fetch("/profiles.json", { cache: "no-store" });
       if (!res.ok) throw new Error("profiles.json not found");
       const db = await res.json();
       const profile = db[slug];
@@ -177,7 +180,7 @@
 
       // FOTO 
       const avatar = document.getElementById("avatar");
-      avatar.src = p.photo || "assets/photos/placeholder.jpg";
+      avatar.src = p.photo || "/assets/photos/placeholder.jpg";
       avatar.alt = p.fullName + " photo";
 
       // UPDATE: LOGO perusahaan kanan atas  
@@ -216,29 +219,7 @@
         } catch (_) {}
       };
 
-      // Voucher button: buka URL voucher (jika ada) atau telepon nomor profil
-      /*const btnVoucher = document.getElementById("btnVoucher");
-      if (p.voucherUrl || p.phone) {
-        btnVoucher.style.display = "inline-flex";
-      } else {
-        btnVoucher.style.display = "none";
-      }
-      btnVoucher.onclick = (e) => {
-        e.preventDefault();
-        if (p.voucherUrl) {
-          window.open(p.voucherUrl, "_blank");
-          return;
-        }
-        if (p.phone) {
-          // sanitize phone
-          const tel = String(p.phone).replace(/[^+0-9]/g, "");
-          window.location.href = `tel:${tel}`;
-          return;
-        }
-        alert("No voucher link or phone available for this profile.");
-      };
-    }*/
-       // Voucher button: selalu tampil dan buka paysgift di tab baru
+      // Voucher button: selalu tampil dan buka paysgift di tab baru
       const btnVoucher = document.getElementById("btnVoucher");
       btnVoucher.style.display = "inline-flex";
       btnVoucher.href = "https://www.paysgift.co.id/";
