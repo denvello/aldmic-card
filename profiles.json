@@ -37,5 +37,18 @@
     "companyLogo": "assets/brand/coopn-logo.png",
     "email": "rini@aldmic.co.id",
     "phone": "+628111313707"
+  },
+  "raymond": {
+    "fullName": "Raymod Chen",
+    "title": "Country Manager",
+    "company": "Coup Marketing Asia Pacific Sdn Bhd",
+    "verified": true,
+    "summary": "Driving partnerships and growth across multi-merchant voucher ecosystem.",
+    "website": "https://coopn.aldmic.com/",
+    "linkedin": "https://www.linkedin.com/in/raymondchm/",
+    "photo": "assets/photos/raymondchen.png",
+    "companyLogo": "assets/brand/coopn-logo.png",
+    "email": "raymond.chen@coopnc.com",
+    "phone": "+60123964788"
   }
 }
