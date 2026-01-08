@@ -155,56 +155,56 @@
     }*/
 
     function buildVCard(p) {
-  const parts = (p.fullName || "").trim().split(/\s+/);
-  const firstName = parts.slice(0, -1).join(" ") || parts[0] || "";
-  const lastName = parts.slice(-1)[0] || "";
-
-  // URL absolut yang benar walau di /aldmic-card/
-  const photoUrl = p.photo ? new URL(p.photo, location.href).toString() : "";
-
-  const lines = [
-    "BEGIN:VCARD",
-    "VERSION:3.0",
-    `FN:${escapeVCF(p.fullName)}`,
-    `N:${escapeVCF(lastName)};${escapeVCF(firstName)};;;`,
-    p.company ? `ORG:${escapeVCF(p.company)}` : "",
-    p.title ? `TITLE:${escapeVCF(p.title)}` : "",
-    p.phone ? `TEL;TYPE=CELL:${escapeVCF(p.phone)}` : "",
-    p.email ? `EMAIL;TYPE=INTERNET,WORK:${escapeVCF(p.email)}` : "",
-    p.website ? `URL:${escapeVCF(p.website)}` : "",
-    p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
-    p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
-    photoUrl ? `PHOTO;VALUE=URI:${escapeVCF(photoUrl)}` : "",
-    "END:VCARD"
-  ].filter(Boolean);
-
-  return lines.join("\r\n");
-}
+      const parts = (p.fullName || "").trim().split(/\s+/);
+      const firstName = parts.slice(0, -1).join(" ") || parts[0] || "";
+      const lastName = parts.slice(-1)[0] || "";
+    
+      // URL absolut yang benar walau di /aldmic-card/
+      const photoUrl = p.photo ? new URL(p.photo, location.href).toString() : "";
+    
+      const lines = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${escapeVCF(p.fullName)}`,
+        `N:${escapeVCF(lastName)};${escapeVCF(firstName)};;;`,
+        p.company ? `ORG:${escapeVCF(p.company)}` : "",
+        p.title ? `TITLE:${escapeVCF(p.title)}` : "",
+        p.phone ? `TEL;TYPE=CELL:${escapeVCF(p.phone)}` : "",
+        p.email ? `EMAIL;TYPE=INTERNET,WORK:${escapeVCF(p.email)}` : "",
+        p.website ? `URL:${escapeVCF(p.website)}` : "",
+        p.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCF(p.linkedin)}` : "",
+        p.summary ? `NOTE:${escapeVCF(p.summary)}` : "",
+        photoUrl ? `PHOTO;VALUE=URI:${escapeVCF(photoUrl)}` : "",
+        "END:VCARD"
+      ].filter(Boolean);
+    
+      return lines.join("\r\n");
+    }
 
     function downloadVCard(filename, content) {
-  // sanitize filename untuk Android
-  const safeFilename = String(filename || "contact.vcf")
-    .toLowerCase()
-    .replace(/[^a-z0-9._-]+/g, "_")
-    .replace(/_+/g, "_");
-
-  const blob = new Blob([content], { type: "text/x-vcard;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-
-  // Cara 1: download normal
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = safeFilename;
-  a.rel = "noopener";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(() => {
-    try { window.open(url, "_blank", "noopener"); } catch (_) {}
-    setTimeout(() => URL.revokeObjectURL(url), 8000);
-  }, 300);
-}
+      // sanitize filename untuk Android
+      const safeFilename = String(filename || "contact.vcf")
+        .toLowerCase()
+        .replace(/[^a-z0-9._-]+/g, "_")
+        .replace(/_+/g, "_");
+    
+      const blob = new Blob([content], { type: "text/x-vcard;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+    
+      // Cara 1: download normal
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = safeFilename;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    
+      setTimeout(() => {
+        try { window.open(url, "_blank", "noopener"); } catch (_) {}
+        setTimeout(() => URL.revokeObjectURL(url), 8000);
+      }, 300);
+    }
 
 
     function getUserSlug() {
